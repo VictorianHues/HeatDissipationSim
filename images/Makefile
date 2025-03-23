@@ -62,3 +62,8 @@ anim_seq.gif: $(wildcard seq_images/img.*.pgm)
 	$(shell ls -v seq_images/img.*.pgm > frames.txt)
 	$(CONVERT) @frames.txt +level-colors blue,red $@
 	rm frames.txt
+
+anim_omp.gif: $(wildcard omp_images/img.*.pgm)
+	$(shell ls -v omp_images/img.*.pgm > frames.txt)
+	$(CONVERT) @frames.txt +level-colors blue,red $@
+	rm frames.txt
