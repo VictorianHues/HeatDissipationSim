@@ -58,5 +58,7 @@ GEN_PATTERN3 = \
 pat3_%.pgm: 
 	W=`echo $* | cut -dx -f1`; H=`echo $* | cut -dx -f2`; $(GEN_PATTERN3) $@
 
-anim.gif: $(wildcard img.*.pgm)
-	$(CONVERT) $^ +level-colors blue,red $@
+anim_seq.gif: $(wildcard seq_images/img.*.pgm)
+	$(shell ls -v seq_images/img.*.pgm > frames.txt)
+	$(CONVERT) @frames.txt +level-colors blue,red $@
+	rm frames.txt
