@@ -2,7 +2,7 @@
 #PIN_ROOT=~/projects/pin/
 
 .PHONY: run_with_tracing traces clean
-MCPS_TRACER_ROOT=/home/spolstra/projects/mcps-tracer
+MCPS_TRACER_ROOT=/home/VictorianHues/projects/mcps-tracer
 
 # Take number of threads from environment var P, use 2 as default
 P ?= 2

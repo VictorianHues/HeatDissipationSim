@@ -1,9 +1,9 @@
 .PHONY: run_with_tracing traces clean
 
 # Better to just add the pin binary to your $PATH
-#PIN_ROOT=~/projects/pin/
+PIN_ROOT=~/projects/pin/
 
-MCPS_TRACER_ROOT=/home/spolstra/projects/mcps-tracer
+MCPS_TRACER_ROOT=/home/VictorianHues/projects/mcps-tracer
 
 CURR_DIR=$(notdir $(basename $(shell pwd)))
 PRJ=$(CURR_DIR)
