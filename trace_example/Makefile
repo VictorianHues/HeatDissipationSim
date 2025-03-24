@@ -2,7 +2,7 @@
 
 # Make sure that PIN_ROOT is set to your pin installation and pin is in your PATH.
 
-MCPS_TRACER_ROOT=/home/spolstra/projects/mcps-tracer
+MCPS_TRACER_ROOT=/home/Victorianhues/projects/mcps-tracer
 
 CURR_DIR=$(notdir $(basename $(shell pwd)))
 PRJ=$(CURR_DIR)

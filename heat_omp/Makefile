@@ -2,7 +2,7 @@
 #PIN_ROOT=~/projects/pin/
 
 .PHONY: run_with_tracing traces clean
-MCPS_TRACER_ROOT=/home/VictorianHues/projects/mcps-tracer
+MCPS_TRACER_ROOT=/home/Victorianhues/projects/mcps-tracer
 
 # Take number of threads from environment var P, use 2 as default
 P ?= 2
@@ -35,7 +35,10 @@ $(PRJ): $(OBJ) $(ANNOT_LIB)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 run_with_tracing: all
-	pin -t $(MCPS_TRACER_ROOT)/obj-intel64/tool/tracer.so -- ./$(PRJ) -i 1 -p $(P)
+	pin -t $(MCPS_TRACER_ROOT)/tool/obj-intel64/tracer.so -- ./$(PRJ) -i 1 -p $(P)
+
+run_with_tracing_args: all
+	pin -t $(MCPS_TRACER_ROOT)/tool/obj-intel64/tracer.so -- ./$(PRJ) $(ARGS)
 
 traces: run_with_tracing
 	$(MCPS_TRACER_ROOT)/scripts/trace_converter.py address_log memory_trace.trf

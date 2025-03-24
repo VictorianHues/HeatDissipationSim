@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <float.h>
 #include <time.h>
+#include <omp.h>
 
 #include "compute.h"
 #include "fail.h"
@@ -24,7 +25,6 @@ void update_results(const struct parameters *p, double **temp_grid,
 void initialize_grids(const struct parameters *p, double ***temp_grid,
     double ***temp_grid__new, double ***conductivity_grid);
 void print_simulation_parameters(const struct parameters *p);
-
 
 
 /**
@@ -175,7 +175,7 @@ void print_simulation_parameters(const struct parameters *p)
 
 
 /**
- * @brief Update the temperature grid for one iteration.
+ * @brief Update the temperature grid for one iteration in parallel.
  * 
  * @param p Simulation parameters.
  * @param temp_grid Current temperature grid.
@@ -188,41 +188,63 @@ void print_simulation_parameters(const struct parameters *p)
 void update_temperature_grid(const struct parameters *p, double **temp_grid, 
     double **temp_grid__new, double **conductivity_grid, size_t N, size_t M, double *max_diff)
 {
-    *max_diff = 0.0;
+    double local_max_diff = 0.0;
 
-    for (size_t i = 1; i < N-1; i++) // Top and bottom rows are ghost cells
-    { 
-        for (size_t j = 0; j < M; j++) 
-        {
-            size_t up = i - 1;
-            size_t down = i + 1;
-            size_t left = (j + M - 1) % M;
-            size_t right = (j + 1) % M;
+    //#pragma omp parallel for reduction(max:local_max_diff) num_threads(p->nthreads)
+    #pragma omp parallel num_threads(p->nthreads)
+    {
+        #pragma omp barrier
+        start_roi();
 
-            double c = conductivity_grid[i][j];
-
-            double adjacent_sum =
-                (temp_grid[i][left] + temp_grid[i][right] + temp_grid[up][j] + temp_grid[down][j]) * ADJACENT_WEIGHT;
-
-            double diagonal_sum =
-                (temp_grid[up][left] + temp_grid[up][right] + temp_grid[down][left] + temp_grid[down][right]) * DIAGONAL_WEIGHT;
-
-            double weighted_sum = adjacent_sum + diagonal_sum;
-
-            temp_grid__new[i][j] = c * temp_grid[i][j] + (1 - c) * weighted_sum;
-
-            double diff = fabs(temp_grid__new[i][j] - temp_grid[i][j]);
-            if (diff > *max_diff) 
+        #pragma omp for reduction(max:local_max_diff)
+        for (size_t i = 1; i < N-1; i++) // Top and bottom rows are ghost cells
+        { 
+            for (size_t j = 0; j < M; j++) 
             {
-                *max_diff = diff;
+                //start_roi();
+
+                size_t up = i - 1;
+                size_t down = i + 1;
+                size_t left = (j + M - 1) % M;
+                size_t right = (j + 1) % M;
+
+                double c = conductivity_grid[i][j];
+
+                double adjacent_sum =
+                    (temp_grid[i][left] + temp_grid[i][right] + temp_grid[up][j] + temp_grid[down][j]) * ADJACENT_WEIGHT;
+
+                double diagonal_sum =
+                    (temp_grid[up][left] + temp_grid[up][right] + temp_grid[down][left] + temp_grid[down][right]) * DIAGONAL_WEIGHT;
+
+                double weighted_sum = adjacent_sum + diagonal_sum;
+
+                // printf("Thread %d updating temp_grid__new[%zu][%zu] at address: %p\n",
+                //     omp_get_thread_num(), i, j, (void*)&temp_grid__new[i][j]);
+
+                temp_grid__new[i][j] = c * temp_grid[i][j] + (1 - c) * weighted_sum;
+
+                double diff = fabs(temp_grid__new[i][j] - temp_grid[i][j]);
+                if (diff > local_max_diff) 
+                {
+                    local_max_diff = diff;
+                }
+
+                //end_roi();
             }
         }
+
+        printf("Thread %d local_max_diff: %f\n", omp_get_thread_num(), local_max_diff);
+
+        #pragma omp barrier
+        end_roi();
     }
+    
+    *max_diff = local_max_diff;
 }
 
 
 /**
- * @brief Compute the heat dissipation in a grid.
+ * @brief Compute the heat dissipation in the system.
  * 
  * @param p Simulation parameters.
  * @param r Simulation results.
@@ -270,6 +292,8 @@ void do_compute(const struct parameters* p, struct results *r)
     }
 
     update_results(p, temp_grid, iteration, N, M, r, max_diff, time_start); // Final state
+
+    printf("Parallel Heat dissipation completed.\n");
 
     /* Free allocated memory */
     for (size_t i = 0; i < N; i++) 

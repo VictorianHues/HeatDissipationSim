@@ -271,6 +271,8 @@ void do_compute(const struct parameters* p, struct results *r)
 
     update_results(p, temp_grid, iteration, N, M, r, max_diff, time_start); // Final state
 
+    printf("Sequential Heat dissipation completed.\n");
+
     /* Free allocated memory */
     for (size_t i = 0; i < N; i++) 
     {
