@@ -34,6 +34,9 @@ $(PRJ): $(OBJ) $(ANNOT_LIB)
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
+run_args: all
+	./$(PRJ) $(ARGS)
+
 run_with_tracing: all
 	pin -t $(MCPS_TRACER_ROOT)/tool/obj-intel64/tracer.so -- ./$(PRJ) -i 1 -p $(P)
 

@@ -32,11 +32,14 @@ $(PRJ): $(OBJ) $(ANNOT_LIB)
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-run: all
-	./$(PRJ) -i 1
+run_args: all
+	./$(PRJ) $(ARGS)
 
 run_with_tracing: all
 	pin -t $(MCPS_TRACER_ROOT)/tool/obj-intel64/tracer.so -- ./$(PRJ) -i 1
+
+run_with_tracing_args: all
+	pin -t $(MCPS_TRACER_ROOT)/tool/obj-intel64/tracer.so -- ./$(PRJ) $(ARGS)
 
 traces: run_with_tracing
 	$(MCPS_TRACER_ROOT)/scripts/trace_converter.py address_log memory_trace.trf
