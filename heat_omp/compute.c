@@ -190,6 +190,7 @@ void update_temperature_grid(const struct parameters *p, double **temp_grid,
 {
     double local_max_diff = 0.0;
 
+    /* Schedule may be changed for dynamic load allocation */
     #pragma omp parallel for reduction(max:local_max_diff) schedule(static) num_threads(p->nthreads)
     for (size_t i = 1; i < N-1; i++) // Top and bottom rows are ghost cells
     { 
