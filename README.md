@@ -8,10 +8,11 @@
 4. [Compilation](#compilation)
 5. [Usage](#usage)
 6. [Address Tracing Scripts](#address-tracing-scripts)
-7. [Program Command Line Arguments](#program-command-line-arguments)
-8. [File Structure](#file-structure)
-9. [References](#references)
-10. [License](#license)
+7. [Simulate Address Traces](#simulate-address-traces-on-different-cache-coherency-protocols)
+8. [Program Command Line Arguments](#program-command-line-arguments)
+9. [File Structure](#file-structure)
+10. [References](#references)
+11. [License](#license)
 
 ## Introduction
 
@@ -75,6 +76,7 @@ Ensure you have the following installed on your system:
    ```
 
 ## Compilation
+
 Compile either the `heat_seq` or `heat_omp` implementations and generate executeable:
 
    ``` sh
@@ -131,6 +133,68 @@ Use Python to print the trace file
    python3 ../ scripts/trace_printer.py memory_trace.trf
    ```
 
+## Pattern Grid Generation
+
+Enter the `images/` directory to create image pattern grids and animations for heat dissipation simulations:
+
+- Generate a random noise pattern of $N \times M$ size:
+
+   ``` sh
+   make areasNxM.pgm # Replace N and M with grid dimensions
+   ```
+
+- Creates a plasma fractal pattern of $N \times M$ size:
+
+   ``` sh
+   make plasma_NxM.pgm # Replace N and M with grid dimensions
+   ```
+
+- Produces a gradient pattern with a 45-degree distortion of $N \times M$ size:
+
+   ``` sh
+   make gradient_NxM.pgm # Replace N and M with grid dimensions
+   ```
+
+- Generates a uniform grey image of $N \times M$ size:
+
+   ``` sh
+   make uni_NxM.pgm # Replace N and M with grid dimensions
+   ```
+
+- Creates a custom pattern with rectangles, lines, and circle of $N \times M$ size:
+
+   ``` sh
+   make pat1_NxM.pgm # Replace N and M with grid dimensions
+   ```
+
+- Generates a pattern with circles and rectangles on a black background of $N \times M$ size:
+
+   ``` sh
+   make pat2_NxM.pgm # Replace N and M with grid dimensions
+   ```
+
+- Generates a polygonal pattern with circles and rectangles of $N \times M$ size:
+
+   ``` sh
+   make pat3_NxM.pgm # Replace N and M with grid dimensions
+   ```
+
+- Combine sequential `.pgm` images from the `seq_images` directory into an animated `GIF` with a blue-to-red color gradient
+
+   ``` sh
+   make anim_seq.gif
+   ```
+
+- Combine sequential `.pgm` images from the `omp_images` directory into an animated `GIF` with a blue-to-red color gradient
+
+   ``` sh
+   make anim_omp.gif
+   ```
+
+## Simulate Address Traces on Different Cache Coherency Protocols
+
+Use the Cache Coherency Protocol implementations [repository](https://github.com/VictorianHues/CacheCoherencyProtocolModels.git) to simulate MOESI and simple VALID-INVALID cache coherency protocols using the address traces produced by the Heat Dissipation Simulation.
+
 ## Program Command Line Arguments
 
 | Parameter        | Definition / Purpose |
@@ -157,8 +221,9 @@ Below is the expected directory structure for the project:
 ├── src/               # Template source code
 ├── include/           # Header files
 ├── scripts/           # Python scripts for address traces
+├── trace_example/     # Example of trace file compiler
 ├── images/            # Temperature and Conductivity Grids
-├── trace_files/       # Trace file compiler and complete traces
+├── trace_files/       # Complete Experimental Traces
 ├── Makefile           # Build tarball
 ├── reference_output/  # Temperature Grid Reference output
 ├── README.md          # Project documentation
