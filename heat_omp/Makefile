@@ -43,7 +43,7 @@ run_with_tracing: all
 run_with_tracing_args: all
 	pin -t $(MCPS_TRACER_ROOT)/tool/obj-intel64/tracer.so -- ./$(PRJ) $(ARGS)
 
-traces: run_with_tracing
+traces: address_log.00
 	$(MCPS_TRACER_ROOT)/scripts/trace_converter.py address_log memory_trace.trf
 
 clean:
