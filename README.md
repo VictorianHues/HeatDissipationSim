@@ -1,5 +1,11 @@
 # OpenMP Assignment
 
+Plasma             |  Noise
+:-------------------------:|:-------------------------:
+![plasma](https://github.com/VictorianHues/HeatDissipationSim/blob/main/images/plasma.gif)  |  ![plasma](https://github.com/VictorianHues/HeatDissipationSim/blob/main/images/areas.gif)
+
+
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
